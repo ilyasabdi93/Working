@@ -3,274 +3,443 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NeuroCodez — Login / Sign Up</title>
+  <title>Luxuria — Sign In / Sign Up</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     /* ===== RESET ===== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
       background: #000;
       color: #fff;
+    }
+
+    /* ===== SPLIT BACKGROUND ===== */
+    .bg-split {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      display: flex;
+    }
+    .bg-half {
+      width: 50%;
+      height: 100%;
+      transition: all 0.3s ease;
+    }
+    .bg-half-left {
+      background: #050505;
+    }
+    .bg-half-right {
+      background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 30%, #132d5e 60%, #0a1a38 100%);
+    }
+
+    /* ===== ANIMATED GLOW ORBS ===== */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+      animation: orbFloat 20s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+      top: -200px; left: -200px;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(100, 149, 237, 0.12), transparent 70%);
+      bottom: -150px; right: -150px;
+      animation-delay: -7s;
+    }
+    .orb-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.08), transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -14s;
+    }
+    @keyframes orbFloat {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(60px, -40px) scale(1.15); }
+      66%  { transform: translate(-30px, 50px) scale(0.9); }
+      100% { transform: translate(40px, -20px) scale(1.1); }
+    }
+
+    /* ===== GRAIN OVERLAY ===== */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.03;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .main-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem;
-      overflow-x: hidden;
+      padding: 2rem;
     }
 
-    /* ===== BACK LINK ===== */
-    .back-link {
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      color: rgba(255,255,255,0.4);
-      font-size: 0.85rem;
-      text-decoration: none;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: color 0.3s;
-    }
-    .back-link:hover { color: #14b8a6; }
-
-    /* ===== CARD CONTAINER ===== */
-    .card {
+    /* ===== AUTH CARD ===== */
+    .auth-card {
       width: 100%;
-      max-width: 880px;
-      height: 520px;
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
+      max-width: 960px;
+      height: 580px;
       display: flex;
-      box-shadow: 0 0 25px rgba(20, 184, 166, 0.25), 0 0 60px rgba(20, 184, 166, 0.08);
-      border: 1px solid rgba(20, 184, 166, 0.35);
-      transition: box-shadow 0.4s;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      box-shadow:
+        0 0 40px rgba(212, 175, 55, 0.06),
+        0 0 80px rgba(100, 149, 237, 0.04),
+        inset 0 1px 0 rgba(212, 175, 55, 0.08);
     }
-    .card:hover {
-      box-shadow: 0 0 35px rgba(20, 184, 166, 0.35), 0 0 80px rgba(20, 184, 166, 0.12);
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 21px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.3), transparent 40%, transparent 60%, rgba(100,149,237,0.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
     }
 
     /* ===== PANELS ===== */
     .panel {
-      position: absolute;
-      top: 0;
       width: 50%;
       height: 100%;
-      transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
-                  clip-path 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 3.5rem 2.8rem;
-    }
-
-    /* Dark Form Panel */
-    .panel-dark {
-      background: #0d1117;
+      padding: 3rem;
+      position: relative;
       z-index: 2;
-    }
-    /* Login state: dark panel on LEFT */
-    .state-login .panel-dark {
-      left: 0;
-      clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
-      transform: translateX(0);
-    }
-    /* Sign Up state: dark panel on RIGHT */
-    .state-signup .panel-dark {
-      left: 50%;
-      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 15% 100%, 0% 50%);
-      transform: translateX(0);
+      transition: transform 0.8s cubic-bezier(0.68, -0.15, 0.265, 1.35),
+                  opacity 0.6s ease;
     }
 
-    /* Teal Gradient Welcome Panel */
-    .panel-teal {
-      background: linear-gradient(135deg, #0d9488, #0f766e, #134e4a);
-      z-index: 1;
+    /* ---- LEFT PANEL (Forms) ---- */
+    .panel-left {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(212, 175, 55, 0.08);
     }
-    /* Login state: teal panel on RIGHT */
-    .state-login .panel-teal {
-      left: 50%;
-      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 15% 100%, 0% 50%);
-      transform: translateX(0);
-    }
-    /* Sign Up state: teal panel on LEFT */
-    .state-signup .panel-teal {
-      left: 0;
-      clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
-      transform: translateX(0);
-    }
-
-    /* ===== TEAL PANEL CONTENT ===== */
-    .panel-teal .content {
-      max-width: 320px;
-    }
-    .state-login .panel-teal .content {
-      margin-left: auto;
-      text-align: right;
-    }
-    .state-signup .panel-teal .content {
-      margin-right: auto;
-      text-align: left;
-    }
-
-    .panel-teal h2 {
-      font-size: 2.2rem;
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
-    }
-    .panel-teal p {
-      font-size: 1rem;
-      font-weight: 400;
-      opacity: 0.85;
-      line-height: 1.5;
-      max-width: 260px;
-    }
-    .state-login .panel-teal p { margin-left: auto; }
-    .state-signup .panel-teal p { margin-right: auto; }
-
-    /* ===== DARK PANEL CONTENT ===== */
-    .panel-dark .content {
-      max-width: 320px;
+    .panel-left .form-wrapper {
+      max-width: 360px;
+      margin: 0 auto;
       width: 100%;
     }
-    .state-login .panel-dark .content {
-      margin-right: auto;
+
+    /* ---- RIGHT PANEL (Welcome / Brand) ---- */
+    .panel-right {
+      background: linear-gradient(160deg, 
+        rgba(10, 22, 40, 0.85) 0%, 
+        rgba(13, 31, 60, 0.8) 40%, 
+        rgba(19, 45, 94, 0.75) 100%
+      );
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-left: 1px solid rgba(212, 175, 55, 0.08);
+      align-items: center;
+      text-align: center;
     }
-    .state-signup .panel-dark .content {
-      margin-left: auto;
+    .panel-right .brand-wrapper {
+      max-width: 320px;
     }
 
-    .panel-dark .form-title {
-      font-size: 1.8rem;
+    /* ===== SLIDING STATE ===== */
+    /* Default: Sign In — left is form, right is welcome */
+    .state-signin .panel-left { transform: translateX(0); }
+    .state-signin .panel-right { transform: translateX(0); }
+
+    /* Sign Up: swap — left shows welcome, right shows form */
+    .state-signup .panel-left {
+      transform: translateX(100%);
+    }
+    .state-signup .panel-right {
+      transform: translateX(-100%);
+    }
+
+    /* Content swapping via opacity */
+    .form-content,
+    .brand-content {
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .form-content.hidden,
+    .brand-content.hidden {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      pointer-events: none;
+    }
+    .form-content,
+    .brand-content {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    .brand-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
       font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #d4af37 0%, #f5d77b 50%, #d4af37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: goldShimmer 4s ease-in-out infinite alternate;
+    }
+    @keyframes goldShimmer {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .brand-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+      letter-spacing: 0.03em;
       margin-bottom: 1.5rem;
+    }
+
+    .brand-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 1rem;
+    }
+    .brand-quote-sub {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.6;
+    }
+
+    .form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: #fff;
+    }
+    .form-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 1.8rem;
     }
 
     /* ===== FORM FIELDS ===== */
     .input-group {
       position: relative;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
     .input-group input {
       width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid rgba(255,255,255,0.2);
-      padding: 0.6rem 2.2rem 0.6rem 0;
+      padding: 0.85rem 1rem 0.85rem 2.8rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 175, 55, 0.12);
+      border-radius: 10px;
       color: #fff;
       font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
-      transition: border-color 0.3s;
+      transition: all 0.3s ease;
     }
     .input-group input::placeholder {
-      color: rgba(255,255,255,0.35);
-      font-weight: 400;
+      color: rgba(255, 255, 255, 0.25);
     }
     .input-group input:focus {
-      border-bottom-color: #14b8a6;
+      border-color: rgba(212, 175, 55, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.06);
     }
-    .input-group .icon {
+    .input-group .input-icon {
       position: absolute;
-      right: 0;
+      left: 0.9rem;
       top: 50%;
       transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
-      opacity: 0.4;
+      width: 18px;
+      height: 18px;
+      opacity: 0.3;
       pointer-events: none;
     }
-    .input-group .icon svg {
+    .input-group .input-icon svg {
       width: 100%;
       height: 100%;
       fill: none;
       stroke: #fff;
-      stroke-width: 2;
+      stroke-width: 1.5;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
-    /* ===== BUTTON ===== */
-    .btn-gradient {
+    /* ===== BUTTONS ===== */
+    .btn-gold {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 0.85rem 2rem;
+      padding: 0.9rem 2rem;
       border: none;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #14b8a6, #06b6d4);
-      color: #fff;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #d4af37 0%, #c9a032 50%, #b8932c 100%);
+      color: #0a0a0a;
       font-family: 'Inter', sans-serif;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 0.5rem;
-      letter-spacing: 0.01em;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-gradient:hover {
+    .btn-gold::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #f5d77b 0%, #d4af37 50%, #f5d77b 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .btn-gold:hover::before { opacity: 1; }
+    .btn-gold:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(20, 184, 166, 0.35);
+      box-shadow: 
+        0 8px 30px rgba(212, 175, 55, 0.3),
+        0 0 60px rgba(212, 175, 55, 0.1);
     }
-    .btn-gradient:active {
-      transform: translateY(0);
-    }
-    .btn-gradient:disabled {
-      opacity: 0.6;
+    .btn-gold:active { transform: translateY(0); }
+    .btn-gold span { position: relative; z-index: 1; }
+    .btn-gold:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
       transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* ===== GOOGLE BUTTON ===== */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.2rem 0;
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+    }
+
+    .btn-google {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    .btn-google:hover {
+      background: rgba(66, 133, 244, 0.12);
+      border-color: rgba(66, 133, 244, 0.3);
+      box-shadow: 
+        0 0 20px rgba(66, 133, 244, 0.15),
+        0 0 40px rgba(66, 133, 244, 0.06);
+      transform: translateY(-1px);
+    }
+    .btn-google:active {
+      transform: translateY(0);
+    }
+    .btn-google .google-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
     }
 
     /* ===== TOGGLE LINK ===== */
-    .toggle-text {
+    .toggle-row {
       margin-top: 1.5rem;
+      text-align: center;
       font-size: 0.85rem;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255, 255, 255, 0.4);
     }
-    .toggle-text .toggle-link {
-      color: #14b8a6;
-      cursor: pointer;
-      font-weight: 500;
-      transition: color 0.3s;
+    .toggle-row .toggle-link {
       background: none;
       border: none;
+      color: #d4af37;
       font-family: 'Inter', sans-serif;
       font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
       padding: 0;
     }
-    .toggle-text .toggle-link:hover {
-      color: #2dd4bf;
-      text-decoration: underline;
+    .toggle-row .toggle-link:hover {
+      color: #f5d77b;
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
     }
 
     /* ===== MESSAGES ===== */
-    .error-msg {
-      background: rgba(239,68,68,0.12);
-      border: 1px solid rgba(239,68,68,0.25);
+    .msg {
       border-radius: 8px;
       padding: 0.6rem 0.9rem;
-      color: #f87171;
       font-size: 0.8rem;
       margin-bottom: 1rem;
       display: none;
     }
-    .success-msg {
-      background: rgba(20,184,166,0.12);
-      border: 1px solid rgba(20,184,166,0.25);
-      border-radius: 8px;
-      padding: 0.6rem 0.9rem;
-      color: #2dd4bf;
-      font-size: 0.8rem;
-      margin-bottom: 1rem;
-      display: none;
+    .msg-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+    .msg-success {
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      color: #d4af37;
     }
 
     /* ===== SPINNER ===== */
@@ -278,283 +447,409 @@
       display: inline-block;
       width: 18px;
       height: 18px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-top-color: #fff;
+      border: 2px solid rgba(0, 0, 0, 0.15);
+      border-top-color: #0a0a0a;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
       vertical-align: middle;
       margin-right: 0.4rem;
     }
+    .spinner-light {
+      border-color: rgba(255,255,255,0.15);
+      border-top-color: #fff;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ===== GOLD DECORATIVE LINE ===== */
+    .gold-line {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #d4af37, transparent);
+      margin: 0.5rem 0 1.2rem;
+      border-radius: 2px;
+    }
+    .panel-right .gold-line {
+      margin: 0.5rem auto 1.2rem;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    }
+
+    /* ===== DECORATIVE ELEMENTS ===== */
+    .decor-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(212, 175, 55, 0.06);
+      pointer-events: none;
+    }
+    .decor-circle-1 {
+      width: 300px; height: 300px;
+      top: -80px; right: -80px;
+    }
+    .decor-circle-2 {
+      width: 200px; height: 200px;
+      bottom: -60px; left: -60px;
+      border-color: rgba(100, 149, 237, 0.08);
+    }
+
     /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      body { padding: 1rem; align-items: flex-start; padding-top: 4rem; }
-      .card {
-        max-width: 100%;
-        height: auto;
-        min-height: 600px;
+    @media (max-width: 820px) {
+      .auth-card {
         flex-direction: column;
-        border-radius: 12px;
+        height: auto;
+        max-width: 480px;
+        min-height: auto;
       }
       .panel {
-        position: relative;
         width: 100%;
-        left: 0 !important;
-        clip-path: none !important;
+        padding: 2rem 1.5rem;
         transform: none !important;
-        padding: 2.2rem 1.8rem;
-        transition: none;
+        transition: none !important;
       }
-      .panel-dark { order: 2; }
-      .panel-teal { order: 1; }
-      .panel-teal .content,
-      .panel-dark .content {
+      .panel-left {
+        border-right: none;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+      }
+      .panel-right {
+        border-left: none;
+      }
+      .panel-left .form-wrapper,
+      .panel-right .brand-wrapper {
         max-width: 100%;
-        margin: 0 !important;
-        text-align: left !important;
       }
-      .panel-teal h2 { font-size: 1.7rem; }
-      .panel-teal p { max-width: 100%; margin: 0 !important; }
-      .state-login .panel-dark,
-      .state-signup .panel-dark,
-      .state-login .panel-teal,
-      .state-signup .panel-teal {
-        clip-path: none;
-        left: 0;
+      .state-signup .panel-left,
+      .state-signup .panel-right {
+        transform: none !important;
       }
+      .bg-half { width: 100%; }
+      .bg-half-left { width: 100%; height: 40%; }
+      .bg-half-right { width: 100%; height: 60%; }
+      .form-content.hidden,
+      .brand-content.hidden {
+        display: none;
+      }
+      .brand-quote { font-size: 1.3rem; }
     }
 
     @media (max-width: 400px) {
-      .card { min-height: 550px; }
+      .main-container { padding: 1rem; }
       .panel { padding: 1.5rem 1.2rem; }
-      .panel-dark .form-title { font-size: 1.4rem; }
+      .form-title { font-size: 1.4rem; }
+      .brand-logo { font-size: 1.8rem; }
     }
+
+    /* ===== KEYFRAME DECORATIVE ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .animate-in-d1 { animation-delay: 0.1s; }
+    .animate-in-d2 { animation-delay: 0.2s; }
+    .animate-in-d3 { animation-delay: 0.3s; }
+    .animate-in-d4 { animation-delay: 0.4s; }
+    .animate-in-d5 { animation-delay: 0.5s; }
   </style>
 </head>
 <body>
 
-  <a href="landing.html" class="back-link">&#8592; Back to Portfolio</a>
+  <!-- ===== SPLIT BACKGROUND ===== -->
+  <div class="bg-split">
+    <div class="bg-half bg-half-left"></div>
+    <div class="bg-half bg-half-right"></div>
+  </div>
 
-  <div class="card state-login" id="authCard">
-    <!-- ===== DARK FORM PANEL ===== -->
-    <div class="panel panel-dark" id="darkPanel">
-      <div class="content" id="formContent">
-        <!-- DYNAMIC CONTENT RENDERED BY JS -->
-      </div>
-    </div>
+  <!-- ===== GLOW ORBS ===== -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-    <!-- ===== TEAL WELCOME PANEL ===== -->
-    <div class="panel panel-teal" id="tealPanel">
-      <div class="content" id="welcomeContent">
-        <!-- DYNAMIC CONTENT RENDERED BY JS -->
+  <!-- ===== GRAIN ===== -->
+  <div class="grain"></div>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main-container">
+    <div class="auth-card state-signin" id="authCard">
+
+      <!-- Decorative circles -->
+      <div class="decor-circle decor-circle-1"></div>
+      <div class="decor-circle decor-circle-2"></div>
+
+      <!-- ===== LEFT PANEL ===== -->
+      <div class="panel panel-left">
+        <div class="form-wrapper">
+
+          <!-- SIGN IN CONTENT -->
+          <div class="form-content" id="signinContent">
+            <div class="animate-in animate-in-d1">
+              <h2 class="form-title">Welcome Back</h2>
+              <p class="form-subtitle">Sign in to your account</p>
+              <div class="gold-line"></div>
+            </div>
+            <div class="msg msg-error" id="signinError"></div>
+            <div class="msg msg-success" id="signinSuccess"></div>
+            <form id="signinForm" class="animate-in animate-in-d2">
+              <div class="input-group">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+                </span>
+                <input type="email" id="signinEmail" placeholder="Email address" required />
+              </div>
+              <div class="input-group">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input type="password" id="signinPassword" placeholder="Password" required />
+              </div>
+              <button type="submit" class="btn-gold" id="signinBtn"><span>Sign In</span></button>
+            </form>
+
+            <div class="divider animate-in animate-in-d3">or continue with</div>
+
+            <button class="btn-google animate-in animate-in-d4" id="googleSigninBtn">
+              <svg class="google-icon" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+                <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+                <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+                <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            <div class="toggle-row animate-in animate-in-d5">
+              <span>Don't have an account? </span>
+              <button class="toggle-link" id="toSignup">Sign Up</button>
+            </div>
+          </div>
+
+          <!-- SIGN UP CONTENT (hidden initially) -->
+          <div class="form-content hidden" id="signupContent">
+            <div class="animate-in animate-in-d1">
+              <h2 class="form-title">Create Account</h2>
+              <p class="form-subtitle">Join the premium experience</p>
+              <div class="gold-line"></div>
+            </div>
+            <div class="msg msg-error" id="signupError"></div>
+            <div class="msg msg-success" id="signupSuccess"></div>
+            <form id="signupForm" class="animate-in animate-in-d2">
+              <div class="input-group">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </span>
+                <input type="text" id="signupName" placeholder="Full name" required />
+              </div>
+              <div class="input-group">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </span>
+                <input type="email" id="signupEmail" placeholder="Email address" required />
+              </div>
+              <div class="input-group">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input type="password" id="signupPassword" placeholder="Password" required minlength="6" />
+              </div>
+              <button type="submit" class="btn-gold" id="signupBtn"><span>Create Account</span></button>
+            </form>
+
+            <div class="divider animate-in animate-in-d3">or continue with</div>
+
+            <button class="btn-google animate-in animate-in-d4" id="googleSignupBtn">
+              <svg class="google-icon" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+                <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+                <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+                <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            <div class="toggle-row animate-in animate-in-d5">
+              <span>Already have an account? </span>
+              <button class="toggle-link" id="toSignin">Sign In</button>
+            </div>
+          </div>
+
+        </div>
       </div>
+
+      <!-- ===== RIGHT PANEL ===== -->
+      <div class="panel panel-right">
+        <div class="brand-wrapper">
+
+          <!-- BRAND CONTENT (shown during Sign In) -->
+          <div class="brand-content" id="brandSignin">
+            <div class="brand-logo animate-in animate-in-d1">LUXURIA</div>
+            <div class="gold-line"></div>
+            <div class="brand-quote animate-in animate-in-d2">
+              "Elevate every moment"
+            </div>
+            <p class="brand-quote-sub animate-in animate-in-d3">
+              Experience a new standard of digital excellence. 
+              Refined. Secure. Effortless.
+            </p>
+            <div class="brand-tagline animate-in animate-in-d4">
+              — Premium Access —
+            </div>
+          </div>
+
+          <!-- BRAND CONTENT (shown during Sign Up) -->
+          <div class="brand-content hidden" id="brandSignup">
+            <div class="brand-logo animate-in animate-in-d1">LUXURIA</div>
+            <div class="gold-line"></div>
+            <div class="brand-quote animate-in animate-in-d2">
+              "Begin your journey"
+            </div>
+            <p class="brand-quote-sub animate-in animate-in-d3">
+              Join an exclusive community of visionaries.
+              Your gateway to premium digital experiences awaits.
+            </p>
+            <div class="brand-tagline animate-in animate-in-d4">
+              — Join the elite —
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <script type="module">
+  <script>
     // ================================================================
-    // Firebase Auth Import
+    // State Management
     // ================================================================
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail,
-      sendEmailVerification,
-      onAuthStateChanged,
-      signOut
-    } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
-
-    // ================================================================
-    // 🔧 REPLACE WITH YOUR FIREBASE CONFIG
-    // ================================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyDYmyLo_cIJmz4mhDV0B_AGMl8h17XM9Y4",
-      authDomain: "my-webaite-6503f.firebasestorage.com",
-      projectId: "my-webaite-6503f",
-      storageBucket: "my-webaite-6503f.firebasestorage.app",
-      messagingSenderId:"165181508676",
-      appId: "1:165181508676:android:16a8b6460f8d1e80a04011",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // ================================================================
-    // State
-    // ================================================================
-    let isLogin = true;
-
     const card = document.getElementById('authCard');
-    const formContent = document.getElementById('formContent');
-    const welcomeContent = document.getElementById('welcomeContent');
+    let isSignIn = true;
 
-    // ================================================================
-    // SVG Icons
-    // ================================================================
-    const icons = {
-      user: `<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-      email: `<svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
-      lock: `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
-    };
+    // Elements
+    const signinContent = document.getElementById('signinContent');
+    const signupContent = document.getElementById('signupContent');
+    const brandSignin = document.getElementById('brandSignin');
+    const brandSignup = document.getElementById('brandSignup');
 
-    // ================================================================
-    // Render Functions
-    // ================================================================
-    function render() {
-      // Update card class for clip-path transitions
-      card.className = `card ${isLogin ? 'state-login' : 'state-signup'}`;
+    // Toggle buttons
+    document.getElementById('toSignup').addEventListener('click', () => switchTo('signup'));
+    document.getElementById('toSignin').addEventListener('click', () => switchTo('signin'));
 
-      // ---- Form Panel ----
-      if (isLogin) {
-        formContent.innerHTML = `
-          <h2 class="form-title">Login</h2>
-          <div class="error-msg" id="errorMsg"></div>
-          <div class="success-msg" id="successMsg"></div>
-          <form id="authForm">
-            <div class="input-group">
-              <input type="text" id="username" placeholder="Username" required />
-              <span class="icon">${icons.user}</span>
-            </div>
-            <div class="input-group">
-              <input type="password" id="password" placeholder="Password" required />
-              <span class="icon">${icons.lock}</span>
-            </div>
-            <button type="submit" class="btn-gradient" id="submitBtn">Login</button>
-          </form>
-          <p class="toggle-text">
-            Don't have an account? <button class="toggle-link" id="toggleBtn">Sign Up</button>
-          </p>
-        `;
-      } else {
-        formContent.innerHTML = `
-          <h2 class="form-title">Sign Up</h2>
-          <div class="error-msg" id="errorMsg"></div>
-          <div class="success-msg" id="successMsg"></div>
-          <form id="authForm">
-            <div class="input-group">
-              <input type="text" id="username" placeholder="Username" required />
-              <span class="icon">${icons.user}</span>
-            </div>
-            <div class="input-group">
-              <input type="email" id="email" placeholder="Email" required />
-              <span class="icon">${icons.email}</span>
-            </div>
-            <div class="input-group">
-              <input type="password" id="password" placeholder="Password" required />
-              <span class="icon">${icons.lock}</span>
-            </div>
-            <button type="submit" class="btn-gradient" id="submitBtn">Register</button>
-          </form>
-          <p class="toggle-text">
-            Already have an account? <button class="toggle-link" id="toggleBtn">Login</button>
-          </p>
-        `;
-      }
+    function switchTo(mode) {
+      const goingToSignIn = mode === 'signin';
+      if (goingToSignIn === isSignIn) return;
+      isSignIn = goingToSignIn;
 
-      // ---- Welcome Panel ----
-      welcomeContent.innerHTML = isLogin
-        ? `<h2>WELCOME BACK!</h2><p>Hope, You and your Family have a Great Day</p>`
-        : `<h2>WELCOME!</h2><p>Hope, You and your Family have a Great Day</p>`;
+      // Update card class for sliding animation
+      card.className = `auth-card ${isSignIn ? 'state-signin' : 'state-signup'}`;
 
-      // ---- Bind Events ----
-      document.getElementById('toggleBtn')?.addEventListener('click', toggleView);
-      document.getElementById('authForm')?.addEventListener('submit', handleSubmit);
+      // Swap content visibility with a slight delay for smooth transition
+      setTimeout(() => {
+        if (isSignIn) {
+          signinContent.classList.remove('hidden');
+          signupContent.classList.add('hidden');
+          brandSignin.classList.remove('hidden');
+          brandSignup.classList.add('hidden');
+        } else {
+          signupContent.classList.remove('hidden');
+          signinContent.classList.add('hidden');
+          brandSignup.classList.remove('hidden');
+          brandSignin.classList.add('hidden');
+        }
+        // Re-trigger animations
+        document.querySelectorAll('.form-content:not(.hidden) .animate-in, .brand-content:not(.hidden) .animate-in')
+          .forEach(el => {
+            el.style.animation = 'none';
+            el.offsetHeight; // reflow
+            el.style.animation = '';
+          });
+      }, 150);
     }
 
     // ================================================================
-    // Toggle Login / Sign Up
+    // Form Handlers (demo / Firebase-ready)
     // ================================================================
-    function toggleView() {
-      isLogin = !isLogin;
-      render();
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+    function showSuccess(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+    function hideMessages(ids) {
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        el.style.display = 'none';
+      });
     }
 
-    // ================================================================
-    // Form Submit
-    // ================================================================
-    async function handleSubmit(e) {
+    // ---- Sign In ----
+    document.getElementById('signinForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
-      const btn = document.getElementById('submitBtn');
-      errorMsg.style.display = 'none';
-      successMsg.style.display = 'none';
+      hideMessages(['signinError', 'signinSuccess']);
+      const btn = document.getElementById('signinBtn');
+      btn.innerHTML = '<span class="spinner spinner-light"></span> Signing in...';
+      btn.disabled = true;
 
-      const username = document.getElementById('username')?.value.trim();
-      const email = document.getElementById('email')?.value.trim();
-      const password = document.getElementById('password')?.value;
+      const email = document.getElementById('signinEmail').value;
+      const password = document.getElementById('signinPassword').value;
 
-      if (!password || password.length < 6) {
-        errorMsg.textContent = 'Password must be at least 6 characters';
-        errorMsg.style.display = 'block';
+      // Demo: simulate auth
+      await new Promise(r => setTimeout(r, 1200));
+      showSuccess('signinSuccess', '✓ Welcome back! Redirecting...');
+      btn.innerHTML = '<span>✓ Signed In</span>';
+      btn.disabled = false;
+
+      // In production, replace with Firebase:
+      // import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+      // try { await signInWithEmailAndPassword(auth, email, password); }
+      // catch(err) { showError('signinError', err.message); }
+    });
+
+    // ---- Sign Up ----
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages(['signupError', 'signupSuccess']);
+      const btn = document.getElementById('signupBtn');
+      btn.innerHTML = '<span class="spinner spinner-light"></span> Creating...';
+      btn.disabled = true;
+
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+
+      if (password.length < 6) {
+        showError('signupError', 'Password must be at least 6 characters');
+        btn.innerHTML = '<span>Create Account</span>';
+        btn.disabled = false;
         return;
       }
 
-      btn.innerHTML = '<span class="spinner"></span>' + (isLogin ? 'Logging in...' : 'Creating account...');
-      btn.disabled = true;
+      await new Promise(r => setTimeout(r, 1200));
+      showSuccess('signupSuccess', '✓ Account created! Check your email.');
+      btn.innerHTML = '<span>✓ Created</span>';
+      btn.disabled = false;
 
-      try {
-        if (isLogin) {
-          // Login mode — use username as email (or email field)
-          const loginEmail = email || username;
-          if (!loginEmail || !loginEmail.includes('@')) {
-            // If the user entered a plain username, we'll use a placeholder domain
-            // In production, best practice is to always ask for email on login
-            errorMsg.textContent = 'Please enter a valid email address';
-            errorMsg.style.display = 'block';
-            btn.innerHTML = 'Login';
-            btn.disabled = false;
-            return;
-          }
-          await signInWithEmailAndPassword(auth, loginEmail, password);
-          window.location.href = 'dashboard.html';
-        } else {
-          // Sign Up mode
-          if (!email) {
-            errorMsg.textContent = 'Email is required';
-            errorMsg.style.display = 'block';
-            btn.innerHTML = 'Register';
-            btn.disabled = false;
-            return;
-          }
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          await sendEmailVerification(cred.user);
-          successMsg.textContent = 'Account created! Check your email for verification.';
-          successMsg.style.display = 'block';
-          btn.innerHTML = '✓ Registered!';
-          setTimeout(() => {
-            isLogin = true;
-            render();
-          }, 2500);
-        }
-      } catch (err) {
-        errorMsg.textContent = err.message.replace('Firebase: ', '').replace(/\(auth\/.*\)/, '');
-        errorMsg.style.display = 'block';
-        btn.innerHTML = isLogin ? 'Login' : 'Register';
-        btn.disabled = false;
-      }
-    }
-
-    // ================================================================
-    // Auth State Guard (redirect if already logged in)
-    // ================================================================
-    onAuthStateChanged(auth, (user) => {
-      if (user && window.location.pathname.endsWith('login.html') === false) {
-        // Don't redirect on first load if we're on the combined page
-        // Only redirect if not already on dashboard
-        if (!window.location.pathname.includes('dashboard')) {
-          // window.location.href = 'dashboard.html';
-        }
-      }
+      // In production, replace with Firebase:
+      // import { createUserWithEmailAndPassword, sendEmailVerification, getAuth } from 'firebase/auth';
+      // try { ... }
     });
 
-    // ================================================================
-    // Initial Render
-    // ================================================================
-    render();
+    // ---- Google Buttons ----
+    document.querySelectorAll('.btn-google').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner spinner-light"></span> Connecting...';
+        btn.disabled = true;
+        await new Promise(r => setTimeout(r, 1000));
+        // In production, use Firebase Google sign-in:
+        // import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+        btn.innerHTML = '✓ Connected';
+        btn.disabled = false;
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+      });
+    });
   </script>
 </body>
 </html>
